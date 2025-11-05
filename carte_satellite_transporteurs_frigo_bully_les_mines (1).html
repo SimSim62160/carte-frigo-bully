@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Carte satellite — transporteurs frigorifiques (50km autour de Bully-les-Mines)</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-sA+e2m9QfVb6k9o3mGqk1Qb1zYk1fY5qk6b8mY1jtkM=" crossorigin=""/>
+  <style>
+    html,body,#map{height:100%;margin:0;padding:0}
+    .legend{background:white;padding:8px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,0.3)}
+    img.logo{width:48px;height:48px;object-fit:contain;margin-right:8px}
+  </style>
+</head>
+<body>
+<div id="map"></div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-o9N1jQ+0b8qe6v4kQ6k9Qb1zYk1fY5qk6b8mY1jtkM=" crossorigin=""></script>
+<script>
+// Centre: Bully-les-Mines
+const center = [50.4395337, 2.7326346];
+const map = L.map('map').setView(center, 11);
+
+// Satellite tiles (ESRI WorldImagery)
+L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+  maxZoom: 19,
+  attribution: `Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics, and the GIS User Community`
+}).addTo(map);
+
+// Marker data (nom, coords, site, logo)
+const companies = [
+  {
+    name: 'Relais Frigorifique A21',
+    coords: [50.4395337, 2.7326346],
+    site: '',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/7/73/Crystal_Clear_action_stop.png',
+    note: 'Entreposage frigorifique — Bully-les-Mines (ZI Les Alouettes)'
+  },
+  {
+    name: 'TRANSFREEZE',
+    coords: [50.46667, 2.86667],
+    site: 'https://www.transfreeze.com',
+    logo: 'https://www.transfreeze.com/favicon.ico',
+    note: 'Vendin-le-Vieil (ZI Bois Rigault)'
+  },
+  {
+    name: 'LOCAGEL',
+    coords: [50.46667, 2.86667],
+    site: 'https://www.locagel.com',
+    logo: 'https://www.locagel.com/favicon.ico',
+    note: 'Vendin-le-Vieil — entreposage & transport frigo'
+  },
+  {
+    name: 'TRANSPORTS NVT',
+    coords: [50.31313, 2.74732],
+    site: 'https://www.transports-nvt.fr',
+    logo: 'https://www.transports-nvt.fr/favicon.ico',
+    note: 'Anzin-Saint-Aubin / Lens — transport frigorifique'
+  },
+  {
+    name: 'SELEDIS (Dispam)',
+    coords: [50.3392, 2.8511],
+    site: '',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/e/e8/Refrigerator_icon.svg',
+    note: 'Bailleul-Sir-Berthoult / Arras — transport frigorifique'
+  },
+  {
+    name: 'SALESKY NORD',
+    coords: [50.302, 2.836],
+    site: 'https://www.salesky.fr/filiales-salesky/salesky-nord/',
+    logo: 'https://www.salesky.fr/favicon.ico',
+    note: 'Athies / Arras — filiale logistique avec flotte frigorifique'
+  },
+  {
+    name: 'Delanchy (agence régionale)',
+    coords: [50.42893, 2.83183],
+    site: 'https://www.delanchy.com',
+    logo: 'https://www.delanchy.com/favicon.ico',
+    note: 'Groupe national — agence régionale (Lens/Arras)'
+  }
+];
+
+companies.forEach(c => {
+  const marker = L.marker(c.coords).addTo(map);
+  const logoImg = c.logo ? `<img class="logo" src="${c.logo}" alt="logo" onerror="this.style.display='none'"/>` : '';
+  const siteLink = c.site ? `<a href="${c.site}" target="_blank" rel="noopener">Site</a>` : '';
+  const popup = `<div style="display:flex;align-items:center">${logoImg}<div><b>${c.name}</b><br/><small>${c.note}</small><br/>${siteLink}</div></div>`;
+  marker.bindPopup(popup);
+});
+
+// Legend / instructions
+const legend = L.control({position:'topright'});
+legend.onAdd = function(){
+  const div = L.DomUtil.create('div','legend');
+  div.innerHTML = `
+    <b>Carte satellite<br/>Transporteurs frigorifiques<br/>(rayon 50 km autour de Bully-les-Mines)</b>
+    <br/>
+    <hr style="margin:6px 0"/>
+    <small>
+      Cliquez sur un marqueur pour afficher le logo et le lien vers le site (si disponible).<br/>
+      Téléchargez la page HTML pour l'ouvrir localement ou partagez le fichier.
+    </small>
+  `;
+  return div;
+}
+legend.addTo(map);
+
+</script>
+</body>
+</html>
